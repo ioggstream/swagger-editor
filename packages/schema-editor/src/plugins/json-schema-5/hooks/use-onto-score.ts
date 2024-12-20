@@ -37,9 +37,10 @@ export function useOntoScore(
     SELECT (COUNT(DISTINCT  ?fieldUri) as ?count) WHERE {
       VALUES ?fieldUri { ${resolvedProperties.unknown.map((propertyName) => `<${propertyName}>`).join(' ')} }
 
-      ?fieldUri
-        rdfs:range ?class
-      .
+      FILTER EXISTS {
+        ?fieldUri rdf:type ?validType .
+        FILTER(?validType IN (rdf:Property, owl:ObjectProperty, owl:DatatypeProperty, owl:FunctionalProperty))
+      }
     }
   `,
     { skip: skipQuery },
